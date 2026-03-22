@@ -10,15 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="विद्या AI">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --saffron: #FF6B00;
-    --gold: #FFB300;
-    --cream: #FFF8F0;
-    --dark: #1A0A00;
-    --mid: #3D1F00;
-    --light-mid: #7A4A1E;
-    --green: #2D7A4F;
-  }
+  :root { --saffron: #FF6B00; --gold: #FFB300; --cream: #FFF8F0; --dark: #1A0A00; --mid: #3D1F00; --light-mid: #7A4A1E; --green: #2D7A4F; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Noto Sans Devanagari', sans-serif; background: var(--cream); min-height: 100vh; display: flex; flex-direction: column; }
   header { background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 100%); padding: 14px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 20px rgba(255,107,0,0.3); position: sticky; top: 0; z-index: 100; }
@@ -126,6 +118,7 @@
   <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
 </div>
 <script>
+  const API_KEY = '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';
   let selectedSubject = 'SSC GD';
   let questionCount = 0;
   let pointCount = 0;
@@ -145,10 +138,7 @@
   }
 
   function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   }
 
   function askQuestion(q) {
@@ -191,8 +181,7 @@
   }
 
   function scrollToBottom() {
-    const chatArea = document.getElementById('chatArea');
-    chatArea.scrollTop = chatArea.scrollHeight;
+    document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight;
   }
 
   function updateStats() {
@@ -218,12 +207,17 @@
 
     conversationHistory.push({ role: 'user', content: text });
 
-    try {
-      const systemPrompt = 'Tum ek expert Hindi teacher ho jo students ko ' + selectedSubject + ' exam ki taiyari karwate ho. Tumhara naam Baldev Thakur hai.\nRules:\n- SIRF Hindi mein jawab do (Devanagari script mein)\n- Simple, clear aur easy to understand\n- Important points **bold** mein likho\n- Examples zaroor do\n- Agar quiz manga ho to 5 MCQ questions do with options aur answers\n- Har jawab ke ant mein ek motivational line\n- Maximum 200 words';
+    const systemPrompt = 'Tum ek expert Hindi teacher ho jo students ko ' + selectedSubject + ' exam ki taiyari karwate ho. Tumhara naam Baldev Thakur hai. SIRF Hindi mein jawab do (Devanagari script mein). Important points **bold** mein likho. Examples zaroor do. Maximum 200 words.';
 
-      const response = await fetch('/.netlify/functions/chat', {
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
@@ -232,11 +226,16 @@
         })
       });
 
-      const data = await response.json();
-      const aiReply = data.content[0].text;
-      conversationHistory.push({ role: 'assistant', content: aiReply });
-      removeTyping();
-      addAIMessage(aiReply);
+      const data = await res.json();
+      
+      if (data.content && data.content[0]) {
+        const reply = data.content[0].text;
+        conversationHistory.push({ role: 'assistant', content: reply });
+        removeTyping();
+        addAIMessage(reply);
+      } else {
+        throw new Error('No response');
+      }
     } catch (err) {
       removeTyping();
       addAIMessage('माफ करें, कुछ गड़बड़ हो गई। कृपया दोबारा कोशिश करें। 🙏');
