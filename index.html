@@ -441,8 +441,8 @@
 <div class="chat-area" id="chatArea">
   <div class="welcome-card">
     <span class="teacher-emoji">👨‍🏫</span>
-    <h2>नमस्ते! मैं आपका AI शिक्षक हूं</h2>
-    <p>मैं आपको हिंदी में SSC GD, UPSC, Banking और किसी भी परीक्षा की तैयारी करवाऊंगा। कोई भी सवाल पूछें! 🙏</p>
+    <h2>नमस्ते! मैं Baldev Thakur हूं</h2>
+    <p>आपकी क्या मदद कर सकता हूं? हिंदी में SSC GD, UPSC, Banking और किसी भी परीक्षा की तैयारी करवाऊंगा। कोई भी सवाल पूछें! 🙏</p>
   </div>
 
   <div class="quick-label">⚡ जल्दी पूछें</div>
@@ -582,7 +582,12 @@ Rules:
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': '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',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
