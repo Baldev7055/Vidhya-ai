@@ -136,7 +136,7 @@
     btn.classList.add('active');
     selectedSubject = subject;
     document.getElementById('currentSubject').textContent = subject;
-    addAIMessage(`बढ़िया! अब मैं आपको **${subject}** की तैयारी में मदद करूंगा। क्या पूछना है? 😊`);
+    addAIMessage('बढ़िया! अब मैं आपको **' + subject + '** की तैयारी में मदद करूंगा। क्या पूछना है? 😊');
   }
 
   function autoResize(el) {
@@ -160,7 +160,7 @@
     const chatArea = document.getElementById('chatArea');
     const div = document.createElement('div');
     div.className = 'message user';
-    div.innerHTML = `<div class="avatar user">🧑‍🎓</div><div class="bubble user">${text}</div>`;
+    div.innerHTML = '<div class="avatar user">🧑‍🎓</div><div class="bubble user">' + text + '</div>';
     chatArea.appendChild(div);
     scrollToBottom();
   }
@@ -170,7 +170,7 @@
     const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
     const div = document.createElement('div');
     div.className = 'message';
-    div.innerHTML = `<div class="avatar ai">🤖</div><div class="bubble ai">${formatted}</div>`;
+    div.innerHTML = '<div class="avatar ai">🤖</div><div class="bubble ai">' + formatted + '</div>';
     chatArea.appendChild(div);
     scrollToBottom();
   }
@@ -180,7 +180,7 @@
     const div = document.createElement('div');
     div.className = 'typing';
     div.id = 'typingIndicator';
-    div.innerHTML = `<div class="avatar ai">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+    div.innerHTML = '<div class="avatar ai">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>';
     chatArea.appendChild(div);
     scrollToBottom();
   }
@@ -219,24 +219,11 @@
     conversationHistory.push({ role: 'user', content: text });
 
     try {
-      const systemPrompt = `Tum ek expert Hindi teacher ho jo students ko ${selectedSubject} exam ki taiyari karwate ho. Tumhara naam Baldev Thakur hai.
-Rules:
-- SIRF Hindi mein jawab do (Devanagari script mein)
-- Simple, clear aur easy to understand
-- Important points **bold** mein likho
-- Examples zaroor do
-- Agar quiz manga ho to 5 MCQ questions do with options aur answers
-- Har jawab ke ant mein ek motivational line
-- Maximum 200 words`;
+      const systemPrompt = 'Tum ek expert Hindi teacher ho jo students ko ' + selectedSubject + ' exam ki taiyari karwate ho. Tumhara naam Baldev Thakur hai.\nRules:\n- SIRF Hindi mein jawab do (Devanagari script mein)\n- Simple, clear aur easy to understand\n- Important points **bold** mein likho\n- Examples zaroor do\n- Agar quiz manga ho to 5 MCQ questions do with options aur answers\n- Har jawab ke ant mein ek motivational line\n- Maximum 200 words';
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/.netlify/functions/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': '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',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
